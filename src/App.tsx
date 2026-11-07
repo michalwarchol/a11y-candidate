@@ -55,22 +55,32 @@ export function App() {
         />
         {isAlertsOpen && <AlertsModal onClose={handleCloseAlerts} />}
         <ViewSwitcher activeView={activeView} onViewChange={setActiveView} />
-        {activeView === 'schedule' && (
-          <section className={css({ display: 'flex', flexDirection: 'column', gap: '4' })}>
-            <SessionFilters activeFilter={activeFilter} onFilterChange={setActiveFilter} />
-            <ScheduleList sessions={visibleSessions} />
-          </section>
-        )}
-        {activeView === 'results' && (
-          <section>
-            <ResultsTable />
-          </section>
-        )}
-        {activeView === 'medals' && (
-          <section>
-            <p className={css({ color: 'text.primary', textStyle: 't_medium' })}>{copy.medals}</p>
-          </section>
-        )}
+        <section
+          id="schedule-panel"
+          role="tabpanel"
+          aria-labelledby="schedule-tab"
+          hidden={activeView !== 'schedule'}
+          className={schedulePanelClass}
+        >
+          <SessionFilters activeFilter={activeFilter} onFilterChange={setActiveFilter} />
+          <ScheduleList sessions={visibleSessions} />
+        </section>
+        <section
+          id="results-panel"
+          role="tabpanel"
+          aria-labelledby="results-tab"
+          hidden={activeView !== 'results'}
+        >
+          <ResultsTable />
+        </section>
+        <section
+          id="medals-panel"
+          role="tabpanel"
+          aria-labelledby="medals-tab"
+          hidden={activeView !== 'medals'}
+        >
+          <p className={css({ color: 'text.primary', textStyle: 't_medium' })}>{copy.medals}</p>
+        </section>
       </Stack>
     </main>
   );
