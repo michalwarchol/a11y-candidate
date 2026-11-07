@@ -1,6 +1,6 @@
 import { css } from 'styled-system/css';
 import { Stack } from 'styled-system/jsx';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { AlertsModal } from './components/AlertsModal';
 import { ResultsTable } from './components/ResultsTable';
@@ -10,14 +10,30 @@ import { SiteHeader } from './components/SiteHeader';
 import { ViewSwitcher } from './components/ViewSwitcher';
 import { copy, filterSessions, type SessionFilterId, sessions, type ViewId } from './data/fixtures';
 
+const schedulePanelClass = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '4',
+});
+
 export function App() {
   const [activeView, setActiveView] = useState<ViewId>('schedule');
   const [activeFilter, setActiveFilter] = useState<SessionFilterId>('all');
   const [isAlertsOpen, setIsAlertsOpen] = useState(false);
+  const alertsButtonRef = useRef<HTMLButtonElement>(null);
+  const restoreAlertsFocusRef = useRef(false);
 
   const handleCloseAlerts = useCallback(() => {
+    restoreAlertsFocusRef.current = true;
     setIsAlertsOpen(false);
   }, []);
+
+  useEffect(() => {
+    if (!isAlertsOpen && restoreAlertsFocusRef.current) {
+      restoreAlertsFocusRef.current = false;
+      alertsButtonRef.current?.focus();
+    }
+  }, [isAlertsOpen]);
 
   const visibleSessions = filterSessions(sessions, activeFilter);
 
@@ -33,25 +49,38 @@ export function App() {
       })}
     >
       <Stack gap="6">
-        <SiteHeader onManageAlerts={() => setIsAlertsOpen(true)} />
+        <SiteHeader
+          alertsButtonRef={alertsButtonRef}
+          onManageAlerts={() => setIsAlertsOpen(true)}
+        />
         {isAlertsOpen && <AlertsModal onClose={handleCloseAlerts} />}
         <ViewSwitcher activeView={activeView} onViewChange={setActiveView} />
-        {activeView === 'schedule' && (
-          <section className={css({ display: 'flex', flexDirection: 'column', gap: '4' })}>
-            <SessionFilters activeFilter={activeFilter} onFilterChange={setActiveFilter} />
-            <ScheduleList sessions={visibleSessions} />
-          </section>
-        )}
-        {activeView === 'results' && (
-          <section>
-            <ResultsTable />
-          </section>
-        )}
-        {activeView === 'medals' && (
-          <section>
-            <p className={css({ color: 'text.primary', textStyle: 't_medium' })}>{copy.medals}</p>
-          </section>
-        )}
+        <section
+          id="schedule-panel"
+          role="tabpanel"
+          aria-labelledby="schedule-tab"
+          hidden={activeView !== 'schedule'}
+          className={schedulePanelClass}
+        >
+          <SessionFilters activeFilter={activeFilter} onFilterChange={setActiveFilter} />
+          <ScheduleList sessions={visibleSessions} />
+        </section>
+        <section
+          id="results-panel"
+          role="tabpanel"
+          aria-labelledby="results-tab"
+          hidden={activeView !== 'results'}
+        >
+          <ResultsTable />
+        </section>
+        <section
+          id="medals-panel"
+          role="tabpanel"
+          aria-labelledby="medals-tab"
+          hidden={activeView !== 'medals'}
+        >
+          <p className={css({ color: 'text.primary', textStyle: 't_medium' })}>{copy.medals}</p>
+        </section>
       </Stack>
     </main>
   );

@@ -27,6 +27,13 @@ const detailsButtonClass = css({
   },
 });
 
+const detailClass = css({
+  color: 'text.primary',
+  flexBasis: '100%',
+  textStyle: 't_small',
+  w: 'full',
+});
+
 export function ScheduleList({ sessions }: ScheduleListProps) {
   const [expandedIds, setExpandedIds] = useState<ReadonlySet<string>>(() => new Set());
 
@@ -55,6 +62,7 @@ export function ScheduleList({ sessions }: ScheduleListProps) {
     >
       {sessions.map((session) => {
         const isExpanded = expandedIds.has(session.id);
+        const detailId = `${session.id}-detail`;
 
         return (
           <li
@@ -81,23 +89,16 @@ export function ScheduleList({ sessions }: ScheduleListProps) {
             <button
               type="button"
               aria-expanded={isExpanded}
+              aria-controls={detailId}
+              aria-label={`${copy.details} for ${session.name}`}
               className={detailsButtonClass}
               onClick={() => handleToggle(session.id)}
             >
               {copy.details}
             </button>
-            {isExpanded && (
-              <p
-                className={css({
-                  color: 'text.primary',
-                  flexBasis: '100%',
-                  textStyle: 't_small',
-                  w: 'full',
-                })}
-              >
-                {session.detail}
-              </p>
-            )}
+            <p id={detailId} hidden={!isExpanded} className={detailClass}>
+              {session.detail}
+            </p>
           </li>
         );
       })}

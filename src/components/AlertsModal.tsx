@@ -8,6 +8,24 @@ export interface AlertsModalProps {
   onClose: () => void;
 }
 
+const titleId = 'alert-preferences-title';
+
+const dialogClass = css({
+  bg: 'surface.elevated',
+  borderColor: 'border.secondary',
+  borderRadius: 'lg',
+  borderStyle: 'solid',
+  borderWidth: 'xs',
+  color: 'text.primary',
+  m: 'auto',
+  maxW: '24rem',
+  p: '6',
+  w: 'calc(100% - 2rem)',
+  '&::backdrop': {
+    bg: 'surface.scrim',
+  },
+});
+
 const closeButtonClass = css({
   alignSelf: 'flex-start',
   bg: 'surface.base',
@@ -51,66 +69,65 @@ const labelClass = css({
 });
 
 export function AlertsModal({ onClose }: AlertsModalProps) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const heatChangesRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    heatChangesRef.current?.focus();
-  }, []);
+    const dialog = dialogRef.current;
+    if (dialog === null) {
+      return;
+    }
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    dialog.showModal();
+    heatChangesRef.current?.focus();
+
+    const handleCancel = (event: Event) => {
+      event.preventDefault();
+      onClose();
+    };
+
+    dialog.addEventListener('cancel', handleCancel);
+    return () => {
+      dialog.removeEventListener('cancel', handleCancel);
+      if (dialog.open) {
+        dialog.close();
+      }
+    };
+  }, [onClose]);
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDialogElement>) => {
     if (event.key === 'Escape') {
+      event.preventDefault();
       onClose();
     }
   };
 
   return (
-    <div
-      className={css({
-        alignItems: 'center',
-        bg: 'surface.scrim',
-        display: 'flex',
-        inset: '0',
-        justifyContent: 'center',
-        p: '4',
-        position: 'fixed',
-        zIndex: '10',
-      })}
+    <dialog
+      ref={dialogRef}
+      aria-labelledby={titleId}
+      className={dialogClass}
+      onKeyDown={handleKeyDown}
     >
-      <div
-        role="dialog"
-        onKeyDown={handleKeyDown}
-        className={css({
-          bg: 'surface.elevated',
-          borderColor: 'border.secondary',
-          borderRadius: 'lg',
-          borderStyle: 'solid',
-          borderWidth: 'xs',
-          color: 'text.primary',
-          maxW: '24rem',
-          p: '6',
-          w: 'full',
-        })}
-      >
-        <Stack gap="4">
-          <h2 className={css({ color: 'text.primary', textStyle: 'h_small' })}>
-            {copy.alertTitle}
-          </h2>
-          <Stack gap="3">
-            <label className={labelClass}>
-              <input ref={heatChangesRef} type="checkbox" className={checkboxClass} />
-              {copy.heatChanges}
-            </label>
-            <label className={labelClass}>
-              <input type="checkbox" className={checkboxClass} />
-              {copy.medalCeremonies}
-            </label>
-          </Stack>
-          <button type="button" className={closeButtonClass} onClick={onClose}>
-            {copy.close}
-          </button>
+      <Stack gap="4">
+        <h2 id={titleId} className={css({ color: 'text.primary', textStyle: 'h_small' })}>
+          {copy.alertTitle}
+        </h2>
+        <Stack gap="3">
+          <label className={labelClass}>
+            <input ref={heatChangesRef} type="checkbox" className={checkboxClass} />
+            {copy.heatChanges}
+          </label>
+          <label className={labelClass}>
+            <input type="checkbox" className={checkboxClass} />
+            {copy.medalCeremonies}
+          </label>
         </Stack>
-      </div>
-    </div>
+        <button type="button" className={closeButtonClass} onClick={onClose}>
+          {copy.close}
+        </button>
+      </Stack>
+    </dialog>
   );
 }
 

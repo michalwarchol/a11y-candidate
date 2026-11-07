@@ -1,7 +1,7 @@
 import { css, cx } from 'styled-system/css';
 import { Flex } from 'styled-system/jsx';
 
-import { type SessionFilterId, sessionFilters } from '../data/fixtures';
+import { copy, type SessionFilterId, sessionFilters } from '../data/fixtures';
 
 export interface SessionFiltersProps {
   activeFilter: SessionFilterId;
@@ -18,6 +18,7 @@ const chipClass = css({
   color: 'text.primary',
   cursor: 'pointer',
   display: 'inline-flex',
+  gap: '2',
   h: '10',
   px: '4',
   textStyle: 't_small',
@@ -38,24 +39,44 @@ const selectedChipClass = css({
   _hover: { bg: 'action.brand_hover' },
 });
 
+const checkClass = css({
+  h: '4',
+  w: '4',
+});
+
 export function SessionFilters({ activeFilter, onFilterChange }: SessionFiltersProps) {
   return (
-    <Flex direction={{ base: 'column', md: 'row' }} gap="2">
-      {sessionFilters.map((filter, index) => {
+    <Flex
+      role="group"
+      aria-label={copy.filterSessions}
+      direction={{ base: 'column', md: 'row' }}
+      gap="2"
+    >
+      {sessionFilters.map((filter) => {
         const isSelected = filter.id === activeFilter;
 
         return (
-          <div
+          <button
             key={filter.id}
+            type="button"
+            aria-pressed={isSelected}
             className={cx(chipClass, isSelected && selectedChipClass)}
-            {...{
-              role: 'button',
-              tabIndex: index === 0 ? 0 : -1,
-              onClick: () => onFilterChange(filter.id),
-            }}
+            onClick={() => onFilterChange(filter.id)}
           >
+            {isSelected && (
+              <svg aria-hidden="true" viewBox="0 0 16 16" className={checkClass}>
+                <path
+                  d="M3.5 8.5l3 3 6-6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            )}
             {filter.label}
-          </div>
+          </button>
         );
       })}
     </Flex>
