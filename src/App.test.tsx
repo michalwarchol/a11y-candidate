@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom/vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
@@ -53,12 +54,7 @@ describe('Championship Day', () => {
     const user = userEvent.setup();
     render(<App />);
 
-    const [heatOneDetails] = screen.getAllByRole('button', { name: 'Details' });
-    if (heatOneDetails === undefined) {
-      throw new Error('Expected a Details control');
-    }
-
-    await user.click(heatOneDetails);
+    await user.click(screen.getByRole('button', { name: 'Details for Heat 1' }));
 
     expect(screen.getByText('First run starts at 10:15.')).toBeInTheDocument();
   });
@@ -78,8 +74,74 @@ describe('Championship Day', () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await user.click(screen.getByRole('button', { name: 'Menu' }));
+    await user.click(screen.getByRole('button', { name: 'Copy link' }));
 
     expect(screen.getByText('Link copied')).toBeInTheDocument();
+  });
+
+  it('filters to finished sessions from the keyboard', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    expect(screen.getByRole('button', { name: 'Live only' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'All sessions' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    expect(screen.getByRole('button', { name: 'Finished' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
+
+    screen.getByRole('button', { name: 'Finished' }).focus();
+    await user.keyboard('{Enter}');
+
+    expect(screen.getByText('Heat 2')).toBeInTheDocument();
+    expect(screen.queryByText('Heat 1')).not.toBeInTheDocument();
+  });
+
+  it('shows standing words and column names on the results table', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole('tab', { name: 'Results' }));
+
+    expect(screen.getAllByText('Qualified').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Eliminated').length).toBeGreaterThan(0);
+    expect(screen.getByRole('columnheader', { name: 'Athlete' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Sort by bib' })).toBeInTheDocument();
+  });
+
+  it('names the alerts dialog and returns focus on Escape', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const opener = screen.getByRole('button', { name: 'Manage alerts' });
+    await user.click(opener);
+
+    expect(screen.getByRole('dialog', { name: 'Alert preferences' })).toBeInTheDocument();
+
+    await user.keyboard('{Escape}');
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(opener).toHaveFocus();
+  });
+
+  it('exposes the favourite control as a pressed toggle', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const favourite = screen.getByRole('button', { name: 'Favourite' });
+    expect(favourite).toHaveAttribute('aria-pressed', 'false');
+
+    await user.click(favourite);
+
+    expect(favourite).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('exposes the schedule as the active tab panel', () => {
+    render(<App />);
+
+    expect(screen.getByRole('tabpanel', { name: 'Schedule' })).toBeInTheDocument();
   });
 });
