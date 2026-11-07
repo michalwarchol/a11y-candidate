@@ -21,20 +21,20 @@ const colors = defineSemanticTokens.colors({
     scrim: sv('rgba(22, 25, 35, 0.6)', 'rgba(22, 25, 35, 0.6)'),
   },
   border: {
-    primary: sv('#d7d9de', '#5f6573'),
-    secondary: sv('rgba(215, 217, 225, 0.4)', 'rgba(183, 185, 198, 0.4)'),
+    primary: sv('#767d8a', '#5f6573'),
+    secondary: sv('#767d8a', '#5f6573'),
     brand: sv('#5329ff', '#6e49ff'),
     selected: sv('#5329ff', '#6e49ff'),
   },
   feedback: {
-    success: { bg: sv('#d6f1e8', '#282d3a') },
-    error: { bg: sv('#fde2e7', '#282d3a') },
+    success: { bg: sv('#d6f1e8', '#0e6b4f') },
+    error: { bg: sv('#fde2e7', '#8f2433') },
   },
   focus: {
     default: sv('#0078d0', '#72baef'),
   },
   action: {
-    brand_hover: sv('#6e49ff', '#a18afc'),
+    brand_hover: sv('#6e49ff', '#7a52ff'),
   },
   graphics: {
     brand: sv('#5329ff', '#6e49ff'),
@@ -44,8 +44,8 @@ const colors = defineSemanticTokens.colors({
     primary: sv('#161923', '#ffffff'),
     secondary: sv('#5f6573', '#b3b5bd'),
     on_brand: sv('#ffffff', '#ffffff'),
-    link_hover: sv('#5329ff', '#6e49ff'),
-    selected: sv('#5329ff', '#6e49ff'),
+    link_hover: sv('#5329ff', '#9d8cff'),
+    selected: sv('#5329ff', '#9d8cff'),
   },
 });
 
