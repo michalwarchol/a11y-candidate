@@ -54,9 +54,11 @@ export function ViewSwitcher({ activeView, onViewChange }: ViewSwitcherProps) {
       {views.map((view: ViewOption) => (
         <a
           key={view.id}
+          id={`${view.id}-tab`}
           href={view.href}
           role="tab"
           aria-selected={view.id === activeView}
+          aria-controls={`${view.id}-panel`}
           className={tabClass}
           onClick={(event) => handleSelect(event, view.id)}
         >
