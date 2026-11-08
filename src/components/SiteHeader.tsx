@@ -1,8 +1,7 @@
 import { css } from 'styled-system/css';
 import { Flex, Stack } from 'styled-system/jsx';
-import { useState } from 'react';
+import { type Ref, useState } from 'react';
 
-import alpineSkiing from '../assets/alpine-skiing.svg';
 import { copy } from '../data/fixtures';
 
 const focusRing = {
@@ -46,11 +45,41 @@ const manageAlertsClass = css({
   ...focusRing,
 });
 
+const bannerClass = css({
+  bg: '#063a5a',
+  borderRadius: 'lg',
+  color: '#ffffff',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1',
+  justifyContent: 'center',
+  maxW: '20rem',
+  px: '4',
+  py: '3',
+  w: 'full',
+});
+
+const bannerTitleClass = css({
+  color: '#ffffff',
+  fontSize: '1.25rem',
+  fontWeight: '700',
+  lineHeight: '1.2',
+  m: '0',
+});
+
+const bannerDetailClass = css({
+  color: '#ffffff',
+  fontSize: '0.875rem',
+  lineHeight: '1.3',
+  m: '0',
+});
+
 export interface SiteHeaderProps {
+  alertsButtonRef: Ref<HTMLButtonElement>;
   onManageAlerts: () => void;
 }
 
-export function SiteHeader({ onManageAlerts }: SiteHeaderProps) {
+export function SiteHeader({ alertsButtonRef, onManageAlerts }: SiteHeaderProps) {
   const [isStarFilled, setIsStarFilled] = useState(false);
   const [hasCopiedLink, setHasCopiedLink] = useState(false);
 
@@ -63,16 +92,10 @@ export function SiteHeader({ onManageAlerts }: SiteHeaderProps) {
         gap="4"
       >
         <Stack gap="3">
-          <img
-            src={alpineSkiing}
-            alt=""
-            className={css({
-              borderRadius: 'lg',
-              h: 'auto',
-              maxW: '20rem',
-              w: 'full',
-            })}
-          />
+          <div className={bannerClass}>
+            <p className={bannerTitleClass}>{copy.bannerTitle}</p>
+            <p className={bannerDetailClass}>{copy.bannerDetail}</p>
+          </div>
           <h1 className={css({ color: 'text.primary', textStyle: 'h_large' })}>{copy.heading}</h1>
           <p className={css({ color: 'text.primary', textStyle: 't_medium' })}>{copy.event}</p>
           <p className={css({ color: 'text.secondary', textStyle: 't_small' })}>{copy.date}</p>
@@ -81,6 +104,8 @@ export function SiteHeader({ onManageAlerts }: SiteHeaderProps) {
           <Flex gap="2" wrap="wrap">
             <button
               type="button"
+              aria-pressed={isStarFilled}
+              aria-label={copy.favourite}
               className={iconButtonClass}
               onClick={() => setIsStarFilled((current) => !current)}
             >
@@ -96,7 +121,7 @@ export function SiteHeader({ onManageAlerts }: SiteHeaderProps) {
             </button>
             <button
               type="button"
-              aria-label="Menu"
+              aria-label={copy.copyLink}
               className={iconButtonClass}
               onClick={() => setHasCopiedLink(true)}
             >
@@ -128,7 +153,12 @@ export function SiteHeader({ onManageAlerts }: SiteHeaderProps) {
                 <path d="M8 11.1l7-3.6M8 12.9l7 3.6" stroke="currentColor" strokeWidth="1.6" />
               </svg>
             </button>
-            <button type="button" className={manageAlertsClass} onClick={onManageAlerts}>
+            <button
+              ref={alertsButtonRef}
+              type="button"
+              className={manageAlertsClass}
+              onClick={onManageAlerts}
+            >
               {copy.manageAlerts}
             </button>
           </Flex>
