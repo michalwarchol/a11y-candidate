@@ -21,10 +21,10 @@ const colors = defineSemanticTokens.colors({
     scrim: sv('rgba(22, 25, 35, 0.6)', 'rgba(22, 25, 35, 0.6)'),
   },
   border: {
-    primary: sv('#767d8a', '#5f6573'),
-    secondary: sv('#767d8a', '#5f6573'),
+    primary: sv('#767d8a', '#a7adba'),
+    secondary: sv('#767d8a', '#a7adba'),
     brand: sv('#5329ff', '#6e49ff'),
-    selected: sv('#5329ff', '#6e49ff'),
+    selected: sv('#5329ff', '#9d8cff'),
   },
   feedback: {
     success: { bg: sv('#d6f1e8', '#0e6b4f') },
@@ -37,6 +37,7 @@ const colors = defineSemanticTokens.colors({
     brand_hover: sv('#6e49ff', '#7a52ff'),
   },
   graphics: {
+    accent: sv('#5329ff', '#a7adba'),
     brand: sv('#5329ff', '#6e49ff'),
     primary_text: sv('#161923', '#ffffff'),
   },

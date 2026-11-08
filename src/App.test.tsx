@@ -144,4 +144,45 @@ describe('Championship Day', () => {
 
     expect(screen.getByRole('tabpanel', { name: 'Schedule' })).toBeInTheDocument();
   });
+
+  it('moves to the next view with the arrow keys', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const schedule = screen.getByRole('tab', { name: 'Schedule' });
+    schedule.focus();
+    await user.keyboard('{ArrowRight}');
+
+    expect(screen.getByRole('tab', { name: 'Results' })).toHaveFocus();
+    expect(screen.getByText('Lena Berg')).toBeInTheDocument();
+  });
+
+  it('sorts bib descending on the first activation and reverses on the second', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole('tab', { name: 'Results' }));
+    expect(screen.getByRole('button', { name: 'Sort by rank, ascending' })).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Sort by bib' }));
+
+    const descendingRows = screen.getAllByRole('row');
+    expect(descendingRows[1]).toHaveTextContent('Hana Novak');
+    expect(screen.getByRole('button', { name: 'Sort by bib, descending' })).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Sort by bib, descending' }));
+
+    const ascendingRows = screen.getAllByRole('row');
+    expect(ascendingRows[1]).toHaveTextContent('Sofia Rossi');
+    expect(screen.getByRole('button', { name: 'Sort by bib, ascending' })).toBeInTheDocument();
+  });
+
+  it('names the results region from the caption', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole('tab', { name: 'Results' }));
+
+    expect(screen.getByRole('region', { name: 'Heat results' })).toBeInTheDocument();
+  });
 });

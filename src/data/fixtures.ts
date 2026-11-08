@@ -59,6 +59,8 @@ export const copy = {
   eliminated: 'Eliminated',
   sortByRank: 'Sort by rank',
   sortByBib: 'Sort by bib',
+  sortAscending: 'ascending',
+  sortDescending: 'descending',
   filterSessions: 'Filter sessions',
 } as const;
 
