@@ -1,6 +1,6 @@
 import { css } from 'styled-system/css';
 import { Stack } from 'styled-system/jsx';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { AlertsModal } from './components/AlertsModal';
 import { ResultsTable } from './components/ResultsTable';
@@ -10,14 +10,30 @@ import { SiteHeader } from './components/SiteHeader';
 import { ViewSwitcher } from './components/ViewSwitcher';
 import { copy, filterSessions, type SessionFilterId, sessions, type ViewId } from './data/fixtures';
 
+const schedulePanelClass = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '4',
+});
+
 export function App() {
   const [activeView, setActiveView] = useState<ViewId>('schedule');
   const [activeFilter, setActiveFilter] = useState<SessionFilterId>('all');
   const [isAlertsOpen, setIsAlertsOpen] = useState(false);
+  const alertsButtonRef = useRef<HTMLButtonElement>(null);
+  const restoreAlertsFocusRef = useRef(false);
 
   const handleCloseAlerts = useCallback(() => {
+    restoreAlertsFocusRef.current = true;
     setIsAlertsOpen(false);
   }, []);
+
+  useEffect(() => {
+    if (!isAlertsOpen && restoreAlertsFocusRef.current) {
+      restoreAlertsFocusRef.current = false;
+      alertsButtonRef.current?.focus();
+    }
+  }, [isAlertsOpen]);
 
   const visibleSessions = filterSessions(sessions, activeFilter);
 
@@ -33,7 +49,10 @@ export function App() {
       })}
     >
       <Stack gap="6">
-        <SiteHeader onManageAlerts={() => setIsAlertsOpen(true)} />
+      <SiteHeader
+          alertsButtonRef={alertsButtonRef}
+          onManageAlerts={() => setIsAlertsOpen(true)}
+        />
         {isAlertsOpen && <AlertsModal onClose={handleCloseAlerts} />}
         <ViewSwitcher activeView={activeView} onViewChange={setActiveView} />
         {activeView === 'schedule' && (

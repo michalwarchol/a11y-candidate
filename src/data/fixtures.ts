@@ -51,6 +51,10 @@ export const copy = {
   noc: 'NOC',
   status: 'Status',
   statusMark: '—',
+  bannerTitle: 'Alpine skiing',
+  bannerDetail: 'Course: 58 gates, 180 m vertical drop',
+  favourite: 'Favourite',
+  copyLink: 'Copy link',
 } as const;
 
 export const views: readonly ViewOption[] = [
