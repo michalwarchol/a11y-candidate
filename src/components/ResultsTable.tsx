@@ -74,8 +74,13 @@ const standingLabel: Record<ResultStanding, string> = {
   Eliminated: copy.eliminated,
 };
 
+const captionId = 'heat-results-caption';
+
 const flipDirection = (direction: SortDirection): SortDirection =>
   direction === 'asc' ? 'desc' : 'asc';
+
+const directionLabel = (direction: SortDirection): string =>
+  direction === 'asc' ? copy.sortAscending : copy.sortDescending;
 
 const sortResults = (
   rows: readonly AthleteResult[],
@@ -99,6 +104,14 @@ export function ResultsTable() {
     setColumn(nextColumn);
   };
 
+  const sortName = (sortColumn: SortColumn, label: string): string => {
+    if (column !== sortColumn) {
+      return label;
+    }
+
+    return `${label}, ${directionLabel(directions[sortColumn])}`;
+  };
+
   const ariaSort = (sortColumn: SortColumn): AriaSort => {
     if (column !== sortColumn) {
       return 'none';
@@ -110,15 +123,28 @@ export function ResultsTable() {
   const sortedRows = sortResults(results, column, directions[column]);
 
   return (
-    <Box overflowX="auto">
+    <Box
+      overflowX="auto"
+      tabIndex={0}
+      role="region"
+      aria-labelledby={captionId}
+      _focusVisible={{
+        outlineColor: 'focus.default',
+        outlineOffset: '0.125rem',
+        outlineStyle: 'solid',
+        outlineWidth: '0.125rem',
+      }}
+    >
       <table className={tableClass}>
-        <caption className={captionClass}>{copy.resultsCaption}</caption>
+        <caption id={captionId} className={captionClass}>
+          {copy.resultsCaption}
+        </caption>
         <thead>
           <tr>
             <th className={headerCellClass} aria-sort={ariaSort('rank')}>
               <button
                 type="button"
-                aria-label={copy.sortByRank}
+                aria-label={sortName('rank', copy.sortByRank)}
                 className={sortButtonClass}
                 onClick={() => handleSort('rank')}
               >
@@ -128,7 +154,7 @@ export function ResultsTable() {
             <th className={headerCellClass} aria-sort={ariaSort('bib')}>
               <button
                 type="button"
-                aria-label={copy.sortByBib}
+                aria-label={sortName('bib', copy.sortByBib)}
                 className={sortButtonClass}
                 onClick={() => handleSort('bib')}
               >

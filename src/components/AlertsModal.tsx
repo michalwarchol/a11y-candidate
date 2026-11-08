@@ -48,9 +48,14 @@ const closeButtonClass = css({
 });
 
 const checkboxClass = css({
-  accentColor: 'graphics.brand',
+  accentColor: 'graphics.accent',
+  cursor: 'pointer',
   h: '5',
   w: '5',
+  outlineColor: 'border.primary',
+  outlineOffset: '0',
+  outlineStyle: 'solid',
+  outlineWidth: '1px',
   _focusVisible: {
     outlineColor: 'focus.default',
     outlineOffset: '0.125rem',
