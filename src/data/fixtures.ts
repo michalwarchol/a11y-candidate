@@ -50,11 +50,15 @@ export const copy = {
   bib: 'Bib',
   noc: 'NOC',
   status: 'Status',
-  statusMark: '—',
   bannerTitle: 'Alpine skiing',
   bannerDetail: 'Course: 58 gates, 180 m vertical drop',
   favourite: 'Favourite',
   copyLink: 'Copy link',
+  athlete: 'Athlete',
+  qualified: 'Qualified',
+  eliminated: 'Eliminated',
+  sortByRank: 'Sort by rank',
+  sortByBib: 'Sort by bib',
 } as const;
 
 export const views: readonly ViewOption[] = [
