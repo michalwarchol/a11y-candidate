@@ -59,6 +59,7 @@ export const copy = {
   eliminated: 'Eliminated',
   sortByRank: 'Sort by rank',
   sortByBib: 'Sort by bib',
+  filterSessions: 'Filter sessions',
 } as const;
 
 export const views: readonly ViewOption[] = [
